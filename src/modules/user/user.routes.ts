@@ -1,6 +1,15 @@
 import { FastifyInstance } from "fastify";
-import { registerUser } from "./user.controller";
+import {
+  getLoggedUserHandler,
+  loginUserHandler,
+  logOutUserHandler,
+  registerUserHandler,
+} from "./user.controller";
+import authMiddleware from "../../middleware/authMiddleware";
 
 export const userRoute = (server: FastifyInstance) => {
-  server.post("/signup", registerUser);
+  server.post("/signup", registerUserHandler);
+  server.post("/login", loginUserHandler);
+  server.post("/logout", logOutUserHandler);
+  server.get("/getuser", { preHandler: authMiddleware }, getLoggedUserHandler);
 };
