@@ -3,12 +3,16 @@ import { Wallet } from "../../models/wallet.model";
 import { Wallettrack } from "../../models/walletTracker.model";
 import { ServiceReturn } from "../../types";
 
-export const createWallet = async (id): Promise<ServiceReturn> => {
+export const createWallet = async (userId): Promise<ServiceReturn> => {
   try {
-    const wallet = await Wallet.create({
-      userId: id,
-      amount: 0,
-    });
+    const walletExists = await Wallet.findOne({ userId });
+    if (walletExists)
+      return {
+        success: true,
+        message: "wallet already exists",
+        data: walletExists,
+      };
+    const wallet = await Wallet.create({ userId, amount: 0 });
     if (!wallet) return { message: "Wallet not created", success: false };
     return { message: "wallet created", success: true };
   } catch (error) {

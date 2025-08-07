@@ -1,6 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { userRoute } from "./modules/user/user.routes";
+import { walletRoute } from "./modules/wallet/wallet.routes";
 
 export default function registerRoutes(server: FastifyInstance) {
   server.register(userRoute, { prefix: "/api/user" });
+  server.register(walletRoute, { prefix: "/api/wallet" });
 }

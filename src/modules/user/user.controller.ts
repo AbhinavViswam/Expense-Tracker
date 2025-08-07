@@ -37,6 +37,7 @@ export const registerUserHandler = async (
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 24 * 60 * 60,
+    path: "/",
   });
 
   return res.send({ message: user.message });
@@ -73,6 +74,7 @@ export const loginUserHandler = async (
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 24 * 60 * 60,
+    path: "/",
   });
   return res.send({ message: user.message, data: user.data });
 };
