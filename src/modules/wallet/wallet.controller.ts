@@ -12,7 +12,7 @@ export const AddToWalletHandler = async (
     return res.send({ error: "all fields are required" });
   }
   const addtowallet = await AddToWallet(id, amount, description);
-  if (!addtowallet) {
+  if (!addtowallet.success) {
     return res.send({ error: addtowallet.message });
   }
   return res.send({ message: addtowallet.message, data: addtowallet.data });
@@ -28,7 +28,7 @@ export const SubFromWalletHandler = async (
     return res.send({ error: "all fields are required" });
   }
   const subfromwallet = await SubFromWallet(id, amount, description);
-  if (!subfromwallet) {
+  if (!subfromwallet.success) {
     return res.send({ error: subfromwallet.message });
   }
   return res.send({ message: subfromwallet.message, data: subfromwallet.data });
