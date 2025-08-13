@@ -3,6 +3,7 @@ import { CategoryBody, CategoryParams } from "./category.types";
 import {
   addCategory,
   deleteCategory,
+  editCategory,
   getCategoriesForUser,
 } from "./category.service";
 
@@ -26,6 +27,19 @@ export const deleteCategoryHandler = async (
 ) => {
   const categoryId = req.params.categoryid;
   const category = await deleteCategory(categoryId);
+  if (!category.success) {
+    throw new Error(category.message);
+  }
+  return res.send({ data: category.data, message: category.message });
+};
+
+export const editCategoryHandler = async (
+  req: FastifyRequest<{ Params: CategoryParams; Body: CategoryBody }>,
+  res: FastifyReply
+) => {
+  const categoryId = req.params.categoryid;
+  const categoryName = req.body.categoryName;
+  const category = await editCategory(categoryId, categoryName);
   if (!category.success) {
     throw new Error(category.message);
   }

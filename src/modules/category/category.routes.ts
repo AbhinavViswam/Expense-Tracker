@@ -3,6 +3,7 @@ import authMiddleware from "../../middleware/authMiddleware";
 import {
   addCategoryHandler,
   deleteCategoryHandler,
+  editCategoryHandler,
   getCategoriesForUserHandler,
 } from "./category.controller";
 
@@ -10,4 +11,5 @@ export const categoryRoute = (server: FastifyInstance) => {
   server.post("/", { preHandler: authMiddleware }, addCategoryHandler);
   server.get("/", { preHandler: authMiddleware }, getCategoriesForUserHandler);
   server.delete("/:categoryid", { preHandler: authMiddleware }, deleteCategoryHandler);
+  server.put("/:categoryid",{preHandler:authMiddleware},editCategoryHandler)
 };

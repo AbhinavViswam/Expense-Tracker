@@ -47,6 +47,27 @@ export const deleteCategory = async (categoryId): Promise<ServiceReturn> => {
   }
 };
 
+export const editCategory = async (
+  categoryId,
+  categoryName
+): Promise<ServiceReturn> => {
+  try {
+    const categoryExists = await Category.findById(categoryId);
+    if (!categoryExists)
+      return { success: false, message: "category doesnot exists" };
+    await Category.findByIdAndUpdate(categoryId, {
+      categoryName,
+    });
+    return { success: true, message: "Category updated" };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Internal server error",
+      data: error,
+    };
+  }
+};
+
 export const getCategoriesForUser = async (userId): Promise<ServiceReturn> => {
   try {
     const category = await Category.aggregate([
