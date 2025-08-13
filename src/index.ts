@@ -3,13 +3,19 @@ import Fastify from "fastify";
 import connectDb from "./db/db";
 import registerRoutes from "./registerRoutes";
 import fastifyCookie from "@fastify/cookie";
+import cors from "@fastify/cors";
 
 const server = Fastify();
 
-const port: number = parseInt(process.env.PORT || "3000");
+const port: number = parseInt(process.env.PORT || "4000");
 
 registerRoutes(server);
+
 server.register(fastifyCookie);
+server.register(cors, {
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+});
 
 connectDb()
   .then(() => console.log("DB connected"))

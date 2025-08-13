@@ -8,7 +8,7 @@ export default async function authMiddleware(
 ) {
   const token = req?.cookies?.token;
   if (!token) {
-    return res.code(401).send({ error: "Unauthorized" });
+    throw new Error("Unauthorized");
   }
   try {
     const decoded = await verifyToken(token);

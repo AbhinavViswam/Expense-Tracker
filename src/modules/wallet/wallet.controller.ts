@@ -13,7 +13,7 @@ export const AddToWalletHandler = async (
   }
   const addtowallet = await AddToWallet(id, amount, description);
   if (!addtowallet.success) {
-    return res.send({ error: addtowallet.message });
+    throw new Error(addtowallet?.message || "not added to wallet");
   }
   return res.send({ message: addtowallet.message, data: addtowallet.data });
 };
@@ -29,7 +29,7 @@ export const SubFromWalletHandler = async (
   }
   const subfromwallet = await SubFromWallet(id, amount, description);
   if (!subfromwallet.success) {
-    return res.send({ error: subfromwallet.message });
+    throw new Error(subfromwallet?.message || "not deleted from wallet");
   }
   return res.send({ message: subfromwallet.message, data: subfromwallet.data });
 };

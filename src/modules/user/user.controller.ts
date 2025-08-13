@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { LoginUserBody, RegisterUserBody } from "./user.types";
 import { createUser, getUserById, loginUser, logOutUser } from "./user.service";
-import { hashPassword, signToken } from "../../config/auth";
+import { hashPassword, signToken, verifyToken } from "../../config/auth";
 import { createWallet } from "../wallet/wallet.service";
 
 export const registerUserHandler = async (
@@ -21,13 +21,13 @@ export const registerUserHandler = async (
   const user = await createUser(name, email, phone, hashedPass);
 
   if (!user.success) {
-    return res.send({ error: user?.data || "", message: user.message });
+    throw new Error(user.message);
   }
 
   const wallet = await createWallet(user?.data?._id);
 
   if (!wallet.success) {
-    return res.send({ error: wallet?.data || "", message: wallet.message });
+    throw new Error(wallet.message);
   }
 
   const token = signToken({ userId: user?.data?._id });
@@ -58,13 +58,13 @@ export const loginUserHandler = async (
   const user = await loginUser(email, password);
 
   if (!user.success) {
-    return res.send({ error: user.message });
+    throw new Error(user.message);
   }
 
   const wallet = await createWallet(user?.data?._id);
 
   if (!wallet.success) {
-    return res.send({ error: wallet?.data || "", message: wallet.message });
+    throw new Error(wallet.message);
   }
 
   const token = signToken({ userId: user.data._id });
@@ -93,7 +93,22 @@ export const getLoggedUserHandler = async (
   const id = (req as any).user._id;
   const user = await getUserById(id);
   if (!user.success) {
-    return res.send({ error: user.message });
+    throw new Error(user.message);
   }
   return res.send({ data: user.data });
 };
+
+export default async function authUser(req: FastifyRequest, res: FastifyReply) {
+  const token = req?.cookies?.token;
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const decoded = await verifyToken(token);
+    const user = await getUserById(decoded.userId);
+    if (!user) throw new Error("user not found");
+    return res.send({ userData: user?.data });
+  } catch {
+    return res.code(401).send({ error: "Unauthorized" });
+  }
+}

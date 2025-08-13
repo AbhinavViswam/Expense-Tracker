@@ -15,7 +15,7 @@ export const addCategoryHandler = async (
   if (!categoryName) return res.send({ error: "All fields are required" });
   const category = await addCategory(id, categoryName);
   if (!category.success) {
-    return res.send({ error: category.message });
+    throw new Error(category.message);
   }
   return res.send({ data: category.data, message: category.message });
 };
@@ -27,7 +27,7 @@ export const deleteCategoryHandler = async (
   const categoryId = req.params.categoryid;
   const category = await deleteCategory(categoryId);
   if (!category.success) {
-    return res.send({ error: category.message });
+    throw new Error(category.message);
   }
   return res.send({ data: category.data, message: category.message });
 };
@@ -39,7 +39,7 @@ export const getCategoriesForUserHandler = async (
   const userId = (req as any).user._id;
   const category = await getCategoriesForUser(userId);
   if (!category.success) {
-    return res.send({ error: category.message });
+    throw new Error(category.message);
   }
   return res.send({ data: category.data, message: category.message });
 };

@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import {
+import authUser, {
   getLoggedUserHandler,
   loginUserHandler,
   logOutUserHandler,
@@ -12,4 +12,5 @@ export const userRoute = (server: FastifyInstance) => {
   server.post("/login", loginUserHandler);
   server.post("/logout", logOutUserHandler);
   server.get("/getuser", { preHandler: authMiddleware }, getLoggedUserHandler);
+  server.get("/checkauth", authUser);
 };
