@@ -40,7 +40,9 @@ export const registerUserHandler = async (
     path: "/",
   });
 
-  return res.send({ message: user.message });
+  const userDetails = await getUserById(user?.data?._id);
+
+  return res.send({ message: user.message, data: userDetails });
 };
 
 export const loginUserHandler = async (
