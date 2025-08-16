@@ -1,5 +1,10 @@
 import { FastifyInstance } from "fastify";
-import { AddToWalletHandler, SubFromWalletHandler } from "./wallet.controller";
+import {
+  AddToWalletHandler,
+  GetWalletHandler,
+  SubFromWalletHandler,
+  WalletTraceHandler,
+} from "./wallet.controller";
 import authMiddleware from "../../middleware/authMiddleware";
 
 export const walletRoute = (server: FastifyInstance) => {
@@ -13,4 +18,10 @@ export const walletRoute = (server: FastifyInstance) => {
     { preHandler: authMiddleware },
     SubFromWalletHandler
   );
+  server.get(
+    "/wallettrace",
+    { preHandler: authMiddleware },
+    WalletTraceHandler
+  );
+  server.get("/wallet", { preHandler: authMiddleware }, GetWalletHandler);
 };

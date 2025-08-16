@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = "24h";
+const JWT_EXPIRES_IN = "30d";
 
 export async function hashPassword(password) {
   return await bcrypt.hash(password, 10);

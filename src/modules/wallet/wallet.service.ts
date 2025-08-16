@@ -83,6 +83,7 @@ export const AddToWallet = async (
     };
   }
 };
+
 export const SubFromWallet = async (
   userId: string,
   amount: number,
@@ -96,7 +97,14 @@ export const SubFromWallet = async (
 
     let wallet = await Wallet.findOne({ userId });
     if (!wallet) {
-      wallet = await Wallet.create({ userId, amount: 0 });
+      return {
+        success: false,
+        message: "wallet not found",
+      };
+    }
+
+    if (wallet.amount < amount) {
+      return { success: false, message: "Your balance is low" };
     }
 
     wallet.amount -= amount;
@@ -109,6 +117,53 @@ export const SubFromWallet = async (
       data: wallet,
       message: "Amount debited from wallet",
     };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Internal server error",
+      data: error,
+    };
+  }
+};
+
+export const getWalletTrace = async (
+  userId: string
+): Promise<ServiceReturn> => {
+  try {
+    const wallet = await Wallet.findOne({ userId });
+    if (!wallet) {
+      return {
+        success: false,
+        message: "Wallet not found",
+      };
+    }
+    const traceWallet = await Wallettrack.find({ walletId: wallet._id });
+    if (!traceWallet) {
+      return {
+        success: false,
+        message: "No transactions made",
+      };
+    }
+    return { success: true, message: "fetched", data: traceWallet };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Internal server error",
+      data: error,
+    };
+  }
+};
+
+export const getWallet = async (userId): Promise<ServiceReturn> => {
+  try {
+    const wallet = await Wallet.findOne({ userId });
+    if (!wallet) {
+      return {
+        success: false,
+        message: "Wallet not found",
+      };
+    }
+    return { success: true, message: "fetched wallet", data: wallet };
   } catch (error) {
     return {
       success: false,
