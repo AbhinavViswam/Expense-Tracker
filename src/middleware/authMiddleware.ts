@@ -13,7 +13,7 @@ export default async function authMiddleware(
       (req.headers.authorization?.startsWith("Bearer ")
         ? req.headers.authorization.split(" ")[1]
         : null);
-
+    console.log("token:", token);
     if (!token) {
       return res.code(401).send({ error: "Unauthorized" });
     }
