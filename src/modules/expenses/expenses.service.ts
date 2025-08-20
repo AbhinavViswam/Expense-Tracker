@@ -7,7 +7,9 @@ export const addExpenses = async (
   userId,
   categoryId,
   amount,
-  description
+  description,
+  status,
+  createdAt
 ): Promise<ServiceReturn> => {
   try {
     const expense = await Expense.create({
@@ -15,6 +17,8 @@ export const addExpenses = async (
       categoryid: categoryId,
       description,
       amount,
+      status,
+      createdAt
     });
 
     if (!expense) {
@@ -31,14 +35,19 @@ export const addExpenses = async (
       };
     }
 
-    if (wallet.amount < amount) {
-      return { success: false, message: "Your balance is low" };
-    }
+    if (status === "debited") {
+      if (wallet.amount < amount) {
+        return { success: false, message: "Your balance is low" };
+      }
 
-    wallet.amount -= amount;
+      wallet.amount -= amount;
+      await wallet.save();
+    }
+    wallet.amount += amount;
     await wallet.save();
-    return { success: true, message: "expense added" };
+    return { success: true, message: "Done" };
   } catch (error) {
+    console.log("error", error);
     return { success: false, message: "Internal error", data: error };
   }
 };
@@ -63,6 +72,7 @@ export const getExpenses = async (
         $match: {
           userid: new Types.ObjectId(userId),
           createdAt: { $gte: startDate, $lte: now },
+          status: "debited",
         },
       },
       {
@@ -81,6 +91,40 @@ export const getExpenses = async (
           totalAmount: { $sum: "$amount" },
         },
       },
+    ]);
+
+    return {
+      success: true,
+      message: "Expenses fetched successfully",
+      data: expenses,
+    };
+  } catch (error) {
+    return { success: false, message: "Internal error", data: error };
+  }
+};
+
+export const getCreditedFromExpenses = async (
+  userId,
+  dateRange = "daily"
+): Promise<ServiceReturn> => {
+  try {
+    const now = new Date();
+    let startDate: Date;
+
+    if (dateRange === "daily") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (dateRange === "monthly") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+    const expenses = await Expense.aggregate([
+      {
+        $match: {
+          userid: new Types.ObjectId(userId),
+          createdAt: { $gte: startDate, $lte: now }
+        },
+      }
     ]);
 
     return {

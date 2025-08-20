@@ -5,6 +5,8 @@ export interface IExpense extends Document {
   categoryid: Types.ObjectId;
   description: string;
   amount: number;
+  status: "credited" | "debited";
+  createdat: any;
 }
 
 const ExpenseSchema = new Schema<IExpense>(
@@ -13,10 +15,13 @@ const ExpenseSchema = new Schema<IExpense>(
     categoryid: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
     description: { type: String, required: true },
     amount: { type: Number, required: true },
+    status: { type: String, enum: ["credited", "debited"], required: true },
+    createdat: {
+      type: String,
+    },
   },
   {
     timestamps: true,
