@@ -36,7 +36,7 @@ export const registerUserHandler = async (
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge:30 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60,
     path: "/",
   });
 
@@ -75,7 +75,7 @@ export const loginUserHandler = async (
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge:30 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60,
     path: "/",
   });
   return res.send({ message: user.message, data: user.data });
@@ -101,16 +101,27 @@ export const getLoggedUserHandler = async (
 };
 
 export default async function authUser(req: FastifyRequest, res: FastifyReply) {
-  const token = req?.cookies?.token;
-  if (!token) {
-    throw new Error("Unauthorized");
-  }
   try {
+    // First try cookies, then Authorization header
+    const token =
+      req.cookies?.token ||
+      (req.headers.authorization?.startsWith("Bearer ")
+        ? req.headers.authorization.split(" ")[1]
+        : null);
+
+    if (!token) {
+      return res.code(401).send({ error: "Unauthorized" });
+    }
+
     const decoded = await verifyToken(token);
     const user = await getUserById(decoded.userId);
-    if (!user) throw new Error("user not found");
+
+    if (!user) {
+      return res.code(404).send({ error: "User not found" });
+    }
+
     return res.send({ userData: user?.data });
-  } catch {
+  } catch (e) {
     return res.code(401).send({ error: "Unauthorized" });
   }
 }
