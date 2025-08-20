@@ -23,6 +23,7 @@ connectDb()
   .catch((e) => console.error("error with db connection", e));
 
 server
-  .listen({ port: port })
-  .then(() => console.log(`server running on port ${port}`))
-  .catch((e) => console.error("Error listening to server", e));
+  .listen({ port, host: "0.0.0.0" })
+  .then(() => console.log(`🚀 Server running on port ${port}`))
+  .catch((e) => console.error("❌ Error listening to server", e));
+
