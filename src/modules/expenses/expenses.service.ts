@@ -42,7 +42,7 @@ export const addExpenses = async (
 
       wallet.amount -= amount;
       await wallet.save();
-      return;
+      return { success: true, message: "Done" };
     }
     wallet.amount += amount;
     await wallet.save();
