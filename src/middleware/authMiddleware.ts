@@ -8,6 +8,7 @@ export default async function authMiddleware(
 ) {
   try {
     // Try cookie first, then fallback to Authorization header
+    console.log('cookies',req.cookies)
     const token =
       req.cookies?.token ||
       (req.headers.authorization?.startsWith("Bearer ")
