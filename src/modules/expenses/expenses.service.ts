@@ -122,7 +122,7 @@ export const getCreditedFromExpenses = async (
       {
         $match: {
           userid: new Types.ObjectId(userId),
-          createdAt: { $gte: startDate, $lte: now }
+          // createdAt: { $gte: startDate, $lte: now }
         },
       }
     ]);
