@@ -60,6 +60,7 @@ export const getExpenses = async (
   try {
     const now = new Date();
     let startDate: Date;
+    console.log('userId ib exp',userId)
 
     if (dateRange === "daily") {
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -123,7 +124,7 @@ export const getCreditedFromExpenses = async (
       {
         $match: {
           userid: new Types.ObjectId(userId),
-          // createdAt: { $gte: startDate, $lte: now }
+          createdAt: { $gte: startDate, $lte: now }
         },
       }
     ]);
