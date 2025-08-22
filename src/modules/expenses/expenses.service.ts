@@ -122,6 +122,8 @@ export const getCreditedFromExpenses = async (
 ): Promise<ServiceReturn> => {
   try {
     const now = new Date();
+    console.log("now", now);
+
     let startDate: Date;
 
     if (dateRange === "daily") {
@@ -143,6 +145,7 @@ export const getCreditedFromExpenses = async (
     } else {
       startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
     }
+    console.log("start", startDate);
     const expenses = await Expense.aggregate([
       {
         $match: {
