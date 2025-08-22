@@ -18,7 +18,7 @@ export const addExpenses = async (
       description,
       amount,
       status,
-      createdAt
+      createdAt,
     });
 
     if (!expense) {
@@ -62,17 +62,29 @@ export const getExpenses = async (
     let startDate: Date;
 
     if (dateRange === "daily") {
-      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+      startDate = new Date(
+        Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate(),
+          0,
+          0,
+          0,
+          0
+        )
+      );
     } else if (dateRange === "monthly") {
-      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+      startDate = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0)
+      );
     } else {
-      startDate = new Date(Date.UTC(now.getFullYear(), 0, 1));
+      startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
     }
     const expenses = await Expense.aggregate([
       {
         $match: {
           userid: new Types.ObjectId(userId),
-          // createdAt: { $gte: startDate, $lte: now },
+          createdAt: { $gte: startDate, $lte: now },
           status: "debited",
         },
       },
@@ -113,19 +125,31 @@ export const getCreditedFromExpenses = async (
     let startDate: Date;
 
     if (dateRange === "daily") {
-      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+      startDate = new Date(
+        Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate(),
+          0,
+          0,
+          0,
+          0
+        )
+      );
     } else if (dateRange === "monthly") {
-      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+      startDate = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0)
+      );
     } else {
-      startDate = new Date(Date.UTC(now.getFullYear(), 0, 1));
+      startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
     }
     const expenses = await Expense.aggregate([
       {
         $match: {
           userid: new Types.ObjectId(userId),
-          // createdAt: { $gte: startDate, $lte: now }
+          createdAt: { $gte: startDate, $lte: now },
         },
-      }
+      },
     ]);
 
     return {
