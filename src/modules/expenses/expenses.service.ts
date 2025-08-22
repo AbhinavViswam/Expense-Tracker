@@ -54,18 +54,21 @@ export const addExpenses = async (
 
 export const getExpenses = async (
   userId,
-  dateRange = "daily"
+  dateRange = "monthly"
 ): Promise<ServiceReturn> => {
   try {
     const now = new Date();
     let startDate: Date;
 
-    if (dateRange === "daily") {
+     if (dateRange === "weekly") {
+      // Go back to Monday of this week (UTC-based)
+      const dayOfWeek = now.getUTCDay(); // Sunday=0, Monday=1, ...
+      const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       startDate = new Date(
         Date.UTC(
           now.getUTCFullYear(),
           now.getUTCMonth(),
-          now.getUTCDate(),
+          now.getUTCDate() - diffToMonday,
           0,
           0,
           0,
@@ -115,21 +118,23 @@ export const getExpenses = async (
   }
 };
 
+
 export const getCreditedFromExpenses = async (
-  userId,
-  dateRange = "daily"
+  userId: string,
+  dateRange: "weekly" | "monthly" | "yearly" = "monthly"
 ): Promise<ServiceReturn> => {
   try {
     const now = new Date();
-
     let startDate: Date;
-
-    if (dateRange === "daily") {
+    if (dateRange === "weekly") {
+      // Go back to Monday of this week (UTC-based)
+      const dayOfWeek = now.getUTCDay(); // Sunday=0, Monday=1, ...
+      const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       startDate = new Date(
         Date.UTC(
           now.getUTCFullYear(),
           now.getUTCMonth(),
-          now.getUTCDate(),
+          now.getUTCDate() - diffToMonday,
           0,
           0,
           0,
@@ -137,11 +142,15 @@ export const getCreditedFromExpenses = async (
         )
       );
     } else if (dateRange === "monthly") {
+      // First of current month
       startDate = new Date(
         Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0)
       );
     } else {
-      startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
+      // Yearly → start of year
+      startDate = new Date(
+        Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0)
+      );
     }
 
     const expenses = await Expense.aggregate([
