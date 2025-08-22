@@ -60,14 +60,13 @@ export const getExpenses = async (
   try {
     const now = new Date();
     let startDate: Date;
-    console.log('userId ib exp',userId)
 
     if (dateRange === "daily") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
     } else if (dateRange === "monthly") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
     } else {
-      startDate = new Date(now.getFullYear(), 0, 1);
+      startDate = new Date(Date.UTC(now.getFullYear(), 0, 1));
     }
     const expenses = await Expense.aggregate([
       {
@@ -114,11 +113,11 @@ export const getCreditedFromExpenses = async (
     let startDate: Date;
 
     if (dateRange === "daily") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
     } else if (dateRange === "monthly") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
     } else {
-      startDate = new Date(now.getFullYear(), 0, 1);
+      startDate = new Date(Date.UTC(now.getFullYear(), 0, 1));
     }
     const expenses = await Expense.aggregate([
       {
