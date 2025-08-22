@@ -48,7 +48,6 @@ export const addExpenses = async (
     await wallet.save();
     return { success: true, message: "Done" };
   } catch (error) {
-    console.log("error", error);
     return { success: false, message: "Internal error", data: error };
   }
 };
@@ -122,7 +121,6 @@ export const getCreditedFromExpenses = async (
 ): Promise<ServiceReturn> => {
   try {
     const now = new Date();
-    console.log("now", now);
 
     let startDate: Date;
 
@@ -145,7 +143,7 @@ export const getCreditedFromExpenses = async (
     } else {
       startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
     }
-    console.log("start", startDate);
+
     const expenses = await Expense.aggregate([
       {
         $match: {

@@ -7,14 +7,12 @@ export default async function authMiddleware(
   res: FastifyReply
 ) {
   try {
-    // Try cookie first, then fallback to Authorization header
-    console.log('cookies',req.cookies)
+  
     const token =
       req.cookies?.token ||
       (req.headers.authorization?.startsWith("Bearer ")
         ? req.headers.authorization.split(" ")[1]
         : null);
-    console.log("token:", token);
     if (!token) {
       return res.code(401).send({ error: "Unauthorized" });
     }
