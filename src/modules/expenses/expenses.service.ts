@@ -45,6 +45,21 @@ export const addExpenses = async (
       await wallet.save();
       return { success: true, message: "Done" };
     }
+    const expense = await Expense.create({
+      userid: userId,
+      categoryid: categoryId,
+      description,
+      amount,
+      status,
+      createdAt,
+    });
+
+    if (!expense) {
+      return {
+        success: false,
+        message: "expense not added",
+      };
+    }
     wallet.amount += amount;
     await wallet.save();
     return { success: true, message: "Done" };
