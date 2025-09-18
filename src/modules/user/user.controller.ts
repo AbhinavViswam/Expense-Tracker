@@ -125,15 +125,3 @@ export default async function authUser(req: FastifyRequest, res: FastifyReply) {
     return res.code(401).send({ error: "Unauthorized" });
   }
 }
-
-export const getUserDetailsHandler = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
-  const id = (req as any).user._id;
-  const user = await userDetails(id);
-  if (!user.success) {
-    throw new Error(user.message);
-  }
-  return res.send({ data: user.data });
-};

@@ -30,7 +30,7 @@ export const deleteCategoryHandler = async (
   if (!category.success) {
     throw new Error(category.message);
   }
-  return res.send({ data: category.data, message: category.message });
+  return res.send({ data: category?.data, message: category.message });
 };
 
 export const editCategoryHandler = async (
