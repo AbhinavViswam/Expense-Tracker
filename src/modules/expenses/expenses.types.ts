@@ -6,5 +6,5 @@ export interface ExpenseBody {
   createdAt:any
 }
 export interface GetExpenseBody {
-  dateRange:string
+  dateRange:"weekly" | "monthly" | "yearly"
 }

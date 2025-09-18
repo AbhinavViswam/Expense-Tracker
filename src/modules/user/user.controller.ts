@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { LoginUserBody, RegisterUserBody } from "./user.types";
-import { createUser, getUserById, loginUser, logOutUser } from "./user.service";
+import { createUser, getUserById, loginUser, logOutUser, userDetails } from "./user.service";
 import { hashPassword, signToken, verifyToken } from "../../config/auth";
 import { createWallet } from "../wallet/wallet.service";
 
@@ -125,3 +125,15 @@ export default async function authUser(req: FastifyRequest, res: FastifyReply) {
     return res.code(401).send({ error: "Unauthorized" });
   }
 }
+
+export const getUserDetailsHandler = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
+  const id = (req as any).user._id;
+  const user = await userDetails(id);
+  if (!user.success) {
+    throw new Error(user.message);
+  }
+  return res.send({ data: user.data });
+};

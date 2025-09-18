@@ -12,21 +12,6 @@ export const addExpenses = async (
   createdAt
 ): Promise<ServiceReturn> => {
   try {
-    const expense = await Expense.create({
-      userid: userId,
-      categoryid: categoryId,
-      description,
-      amount,
-      status,
-      createdAt,
-    });
-
-    if (!expense) {
-      return {
-        success: false,
-        message: "expense not added",
-      };
-    }
     let wallet = await Wallet.findOne({ userId });
     if (!wallet) {
       return {
@@ -38,6 +23,22 @@ export const addExpenses = async (
     if (status === "debited") {
       if (wallet.amount < amount) {
         return { success: false, message: "Your balance is low" };
+      }
+
+      const expense = await Expense.create({
+        userid: userId,
+        categoryid: categoryId,
+        description,
+        amount,
+        status,
+        createdAt,
+      });
+
+      if (!expense) {
+        return {
+          success: false,
+          message: "expense not added",
+        };
       }
 
       wallet.amount -= amount;
@@ -60,7 +61,7 @@ export const getExpenses = async (
     const now = new Date();
     let startDate: Date;
 
-     if (dateRange === "weekly") {
+    if (dateRange === "weekly") {
       // Go back to Monday of this week (UTC-based)
       const dayOfWeek = now.getUTCDay(); // Sunday=0, Monday=1, ...
       const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -118,7 +119,6 @@ export const getExpenses = async (
   }
 };
 
-
 export const getCreditedFromExpenses = async (
   userId: string,
   dateRange: "weekly" | "monthly" | "yearly" = "monthly"
@@ -148,9 +148,7 @@ export const getCreditedFromExpenses = async (
       );
     } else {
       // Yearly → start of year
-      startDate = new Date(
-        Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0)
-      );
+      startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
     }
 
     const expenses = await Expense.aggregate([

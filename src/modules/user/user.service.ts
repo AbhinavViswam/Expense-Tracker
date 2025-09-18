@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import { comparePassword } from "../../config/auth";
 import userModel from "../../models/user.model";
+import { Wallet } from "../../models/wallet.model";
 import { ServiceReturn } from "../../types";
 
 export const createUser = async (
@@ -79,5 +81,46 @@ export const logOutUser = async (req, res) => {
     return res.send({ message: "Logged out successfully" });
   } catch (error) {
     return res.send({ error: "Internal error", data: error });
+  }
+};
+
+export const userDetails = async (id) => {
+  try {
+
+    const details  = await userModel.aggregate([
+      {$match:{_id:new mongoose.Types.ObjectId(id)}},
+      {
+        $lookup:{
+          from:"categories",
+          localField:"_id",
+          foreignField:"userId",
+          as:"category"
+        }
+      },
+      {
+        $lookup:{
+          from:"wallets",
+          localField:"_id",
+          foreignField:"userId",
+          as:"wallet"
+        }
+      },
+      {
+        $lookup:{
+          from:"expenses",
+          localField:"_id",
+          foreignField:"userid",
+          as:"expense"
+        }
+      },
+      {
+        $project:{
+          password:0
+        }
+      }
+    ])
+    return {success:true , message:"fetched", data:details[0]}
+  } catch (error) {
+    return { success: false, message: "Internal error", data: error };
   }
 };
