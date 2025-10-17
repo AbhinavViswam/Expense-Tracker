@@ -42,7 +42,7 @@ export const registerUserHandler = async (
 
   const userDetails = await getUserById(user?.data?._id);
 
-  return res.send({ message: user.message, data: userDetails });
+  return res.send({ message: user.message, data: userDetails, token:token });
 };
 
 export const loginUserHandler = async (
@@ -78,7 +78,7 @@ export const loginUserHandler = async (
     maxAge: 30 * 24 * 60 * 60,
     path: "/",
   });
-  return res.send({ message: user.message, data: user.data });
+  return res.send({ message: user.message, data: user.data, token:token });
 };
 
 export const logOutUserHandler = async (
