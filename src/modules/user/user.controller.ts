@@ -34,8 +34,8 @@ export const registerUserHandler = async (
 
   res.setCookie("token", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "dev"? false : true,
+    sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
     maxAge: 30 * 24 * 60 * 60,
     path: "/",
   });
@@ -73,8 +73,8 @@ export const loginUserHandler = async (
 
   res.setCookie("token", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "dev"? false : true,
+    sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
     maxAge: 30 * 24 * 60 * 60,
     path: "/",
   });
