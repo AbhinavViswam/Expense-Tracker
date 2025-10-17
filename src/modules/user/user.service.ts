@@ -29,6 +29,15 @@ export const createUser = async (
   }
 };
 
+export const getAllUsers =async()=>{
+  const user = await userModel.find().select("-password");
+  return {
+      success: true,
+      message: "Successfully fetched",
+      data: user,
+    };
+}
+
 export const loginUser = async (email, password): Promise<ServiceReturn> => {
   try {
     const userExists = await userModel.findOne({ email });
