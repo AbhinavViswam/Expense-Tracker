@@ -26,7 +26,7 @@ connectDb()
   .catch((e) => console.error("error with db connection", e));
 
 
- cron.schedule("0 9 * * 1", async () => {
+ cron.schedule("*/3 * * * *", async () => {
   console.log("📬 Cron: Generating and sending mails...");
 
   try {
